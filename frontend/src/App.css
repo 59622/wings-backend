@@ -1,0 +1,56 @@
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+.app { max-width: 1000px; margin: 0 auto; padding: 10px; }
+header { display:flex; justify-content:space-between; align-items:center; }
+nav button { margin-right:8px; }
+.dashboard { display:flex; gap:12px; margin-top:12px; }
+.card { border:1px solid #ddd; padding:10px; border-radius:8px; width:30%; }
+.product-table { width:100%; border-collapse: collapse; }
+.product-table th, .product-table td { border:1px solid #ddd; padding:6px; }
+.product-form, .sales-form { display:flex; flex-direction:column; gap:8px; max-width:480px; }
+label { display:flex; flex-direction:column; }
+button { padding:8px 10px; border-radius:6px; }
+footer { margin-top:20px; text-align:center; color:#666; }
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.yes-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.no-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
