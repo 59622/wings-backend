@@ -2,15 +2,21 @@
   "name": "wings-frontend",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://github.com/59622/wings-cafe-inventory.git",
   "dependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^5.0.0",
-    "@vitejs/plugin-react": "^5.0.2"
+    "vite": "^5.0.0"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
