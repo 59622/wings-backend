@@ -27,6 +27,7 @@ const upload = multer({ storage });
 // Serve uploaded images
 app.use("/uploads", express.static(UPLOAD_DIR));
 
+// Database helper
 const DB_PATH = path.join(__dirname, "db.json");
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
 const writeDB = (data) =>
@@ -52,7 +53,7 @@ app.post("/api/products", upload.single("image"), (req, res) => {
       name,
       category,
       price: Number(price),
-      costPrice: Number(costPrice), // ✅ cost price
+      costPrice: Number(costPrice),
       quantity: Number(quantity),
       image,
     };
@@ -78,7 +79,7 @@ app.put("/api/products/:id", upload.single("image"), (req, res) => {
     if (category) product.category = category;
     if (price) product.price = Number(price);
     if (quantity) product.quantity = Number(quantity);
-    if (costPrice) product.costPrice = Number(costPrice); // ✅ allow update
+    if (costPrice) product.costPrice = Number(costPrice);
     if (req.file) product.image = `/uploads/${req.file.filename}`;
 
     writeDB(db);
@@ -107,38 +108,25 @@ app.delete("/api/products/:id", (req, res) => {
 });
 
 // ---------------- SALES ----------------
-
-// POST record multiple sales
 app.post("/api/sales", (req, res) => {
   try {
     const db = readDB();
-    const { items } = req.body; // items = [{ productId, quantity }, ...]
+    const { items } = req.body;
 
     if (!Array.isArray(items) || items.length === 0)
       return res.status(400).json({ message: "No items provided" });
 
-    // Check all products exist and have enough stock
     for (let item of items) {
-      const product = db.products.find(
-        (p) => String(p.id) === String(item.productId)
-      );
+      const product = db.products.find((p) => String(p.id) === String(item.productId));
       if (!product)
-        return res
-          .status(404)
-          .json({ message: `Product not found: ID ${item.productId}` });
+        return res.status(404).json({ message: `Product not found: ID ${item.productId}` });
       if (item.quantity > product.quantity)
-        return res
-          .status(400)
-          .json({ message: `Not enough stock for ${product.name}` });
+        return res.status(400).json({ message: `Not enough stock for ${product.name}` });
     }
 
-    // Deduct stock and create sales
     const newSales = items.map((item) => {
-      const product = db.products.find(
-        (p) => String(p.id) === String(item.productId)
-      );
+      const product = db.products.find((p) => String(p.id) === String(item.productId));
       product.quantity -= Number(item.quantity);
-
       return {
         id: db.sales.length ? db.sales[db.sales.length - 1].id + 1 : 1,
         productId: product.id,
@@ -147,10 +135,8 @@ app.post("/api/sales", (req, res) => {
       };
     });
 
-    // Add sales to db
     db.sales.push(...newSales);
     writeDB(db);
-
     res.status(201).json(newSales);
   } catch (err) {
     console.error(err);
@@ -159,8 +145,6 @@ app.post("/api/sales", (req, res) => {
 });
 
 // ---------------- REPORTS ----------------
-
-// GET reports
 app.get("/api/reports", (req, res) => {
   try {
     const db = readDB();
@@ -172,7 +156,7 @@ app.get("/api/reports", (req, res) => {
 
       const remaining = product.quantity;
       const revenue = sold * product.price;
-      const profit = sold * (product.price - product.costPrice); // ✅ new profit
+      const profit = sold * (product.price - product.costPrice);
 
       return {
         productId: product.id,
@@ -195,5 +179,6 @@ app.get("/api/reports", (req, res) => {
 });
 
 // ---------------- SERVER ----------------
-const PORT = 5000;
+// Use environment PORT for Railway
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
